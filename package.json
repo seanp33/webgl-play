@@ -1,0 +1,32 @@
+{
+  "name": "webgl-play",
+  "version": "0.1.0",
+  "description": "Working with some webgl",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://smonaghan@bitbucket.org/smonaghan/webgl-play.git"
+  },
+  "author": "Sean Monaghan",
+  "dependencies": {
+    "lodash": "~2.2.1",
+    "three": "~0.63.0",
+    "dat-gui": "~0.5.0",
+    "tween": "~0.8.0",
+    "signals": "~1.0.0",
+    "domready": "~0.2.13",
+    "grunt-template-jasmine-requirejs": "~0.1.7"
+  },
+  "devDependencies": {
+    "grunt": "0.4.1",
+    "grunt-contrib-connect": "0.5.0",
+    "grunt-contrib-uglify": "0.2.7",
+    "grunt-contrib-jshint": "0.6.3",
+    "grunt-contrib-copy": "0.4.1",
+    "grunt-contrib-clean": "0.5.0",
+    "grunt-contrib-jasmine": "0.5.2"
+  }
+}
