@@ -1,109 +1,121 @@
-/**
- * Create a canvas element.
- * Obtain a drawing context for the canvas.
- * Initialize the viewport: initViewport
- * Create one or more buffers containing the data to be rendered (typically vertices).
- * Create one or more matrices to define the transformation from vertex buffers to screen space.
- * Create one or more shaders to implement the drawing algorithm.
- * Initialize the shaders with parameters.
- * Draw.
- */
 define(
     [
+        'splotch/ui/Baller',
+        'splotch/ui/Avatar',
+        'splotch/ui/AvatarController',
+        'text!shaders/SimpleVertex.glsl',
+	'text!shaders/SimpleFragment.glsl',
         'signals/Signals'
     ],
 
-    function (Signal) {
+    function (Baller, Avatar, AvatarController, simple_vertex, simple_fragment, Signal) {
 
-        function initViewport(gl, canvas) {
-            gl.viewport(0, 0, canvas.width, canvas.height);
+        var container, stats;
+        var camera, controls, scene, renderer, clock, plane, avatar, baller;
+
+
+        function animate() {
+            requestAnimationFrame(animate);
+            render();
+            stats.update();
         }
 
-        function initMatrices(modelView, projection) {
-            // The transform matrix for the square - translate back in Z
-            // for the camera
-            modelView = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -3.333, 1]);
-
-            // The projection matrix (for a 45 degree field of view)
-            projection = new Float32Array([2.41421, 0, 0, 0, 0, 2.41421, 0, 0, 0, 0, -1.002002, -1, 0, 0, -0.2002002, 0]);
+        function render() {
+            controls.update();
+            renderer.render(scene, camera);
         }
 
-        function initShaders(vertexShaderSource, fragmentShaderSource) {
-            vertexShaderSource =
-
-                "    attribute vec3 vertexPos;\n" +
-                    "    uniform mat4 modelViewMatrix;\n" +
-                    "    uniform mat4 projectionMatrix;\n" +
-                    "    void main(void) {\n" +
-                    "        // Return the transformed and projected vertex value\n" +
-                    "        gl_Position = projectionMatrix * modelViewMatrix * \n" +
-                    "                vec4(vertexPos, 1.0);\n" +
-                    "    }\n";
-
-            fragmentShaderSource =
-                "    void main(void) {\n" +
-                    "    // Return the pixel color: always output white\n" +
-                    "    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n" +
-                    "}\n";
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        function draw(gl, obj) {
-            // clear the background (with black)
-            gl.clearColor(0.0, 0.0, 0.0, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-
-            // set the vertex buffer to be drawn
-            gl.bindBuffer(gl.ARRAY_BUFFER, obj.buffer);
-
-            // set the shader to use
-            gl.useProgram(shaderProgram);
-
-            // connect up the shader parameters: vertex position and
-            projection / model
-            matrices
-            gl.vertexAttribPointer(shaderVertexPositionAttribute,
-                obj.vertSize, gl.FLOAT, false, 0, 0);
-            gl.uniformMatrix4fv(shaderProjectionMatrixUniform, false,
-                projectionMatrix);
-            gl.uniformMatrix4fv(shaderModelViewMatrixUniform, false,
-                modelViewMatrix);
-
-            // draw the object
-            gl.drawArrays(obj.primtype, 0, obj.nVerts);
-        }
-
-        function Viewport(canvas) {
-            this.canvas = canvas;
+        function Viewport() {
             this.$ready = new Signal();
             this.$error = new Signal();
-            this.gl = null;
-            this.modelViewMatrix = [];
-            this.projectionMatrix = [];
-            this.vertexShaderSource = "";
-            this.fragmentShaderSource = "";
         }
 
         Viewport.prototype.init = function () {
-            try {
+            container = document.createElement('div');
+            document.body.appendChild(container);
 
-                this.gl = this.canvas.getContext("experimental-webgl");
+            camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = 1500;
+            camera.position.y = 800;
 
-                this.$ready.dispatch("experimental-webgl ready");
+            scene = new THREE.Scene();
 
-                initViewport(this.gl, this.canvas);
+            scene.add(new THREE.AmbientLight(0x505050));
 
-                initMatrices(this.modelViewMatrix, this.projectionMatrix);
+            var light = new THREE.SpotLight(0xffffff, 1.5);
+            light.position.set(0, 500, 2000);
+            light.castShadow = true;
 
-                initShaders(this.vertexShaderSource, this.fragmentShaderSource);
-            }
-            catch (e) {
-                this.$error.dispatch("Your browser is ass and you need to upgrade. Error creating WebGL context: " + e.toString());
-            }
+            light.shadowCameraNear = 200;
+            light.shadowCameraFar = camera.far;
+            light.shadowCameraFov = 50;
+
+            light.shadowBias = -0.00022;
+            light.shadowDarkness = 0.5;
+
+            light.shadowMapWidth = 2048;
+            light.shadowMapHeight = 2048;
+
+            scene.add(light);
+
+            plane = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000, 8, 8), new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.25, transparent: true, wireframe: true }));
+            plane.rotation.x = -Math.PI / 2;
+            scene.add(plane);
+
+            //projector = new THREE.Projector();
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.sortObjects = false;
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            renderer.shadowMapEnabled = true;
+            renderer.shadowMapType = THREE.PCFShadowMap;
+
+            container.appendChild(renderer.domElement);
+
+            stats = new Stats();
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.top = '0px';
+            container.appendChild(stats.domElement);
+
+            window.addEventListener('resize', onWindowResize, false);
+
+            var mat = {color: 0xff66ff, linewidth: 1, transparent: true};
+            avatar = new Avatar({width: 300, length: 300}, new THREE.Vector3(0, 0, 0), mat, scene, true);
+            avatar.init();
+
+            //avatar, ground, camera, scene, domElement, activatorKey
+            avatarController = new AvatarController(avatar, plane, camera, scene, renderer.domElement, 'shiftKey');
+            avatarController.init();
+            
+            var baller_mat = new THREE.ShaderMaterial({
+		    vertexShader:   simple_vertex,
+		    fragmentShader: simple_fragment
+		});
+            
+            // init baller
+            baller = new Baller(new THREE.Vector3(100, 100, 100), baller_mat, scene);
+            baller.init();
+            
+            // adding nav controls last to give AvatarController first dibs
+            controls = new THREE.TrackballControls(camera, document, 'shiftKey');
+            controls.rotateSpeed = 1.0;
+            controls.zoomSpeed = 1.2;
+            controls.panSpeed = 0.8;
+            controls.noZoom = false;
+            controls.noPan = false;
+            controls.staticMoving = true;
+            controls.dynamicDampingFactor = 0.3;
+
+            animate();
         };
 
-        Viewport.prototype.paint = function () {
-
-        }
 
         return Viewport;
     }

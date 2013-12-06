@@ -11,3 +11,5 @@
 *.sublime*
 node_modules
 dist
+.komodotools
+*.komodoproject
