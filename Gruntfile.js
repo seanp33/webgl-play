@@ -50,12 +50,6 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
-                        cwd: 'node_modules/dat-gui/vendor',
-                        src: '*.js',
-                        dest: 'dist/js/lib/dat-gui/'
-                    },
-                    {
-                        expand: true,
                         cwd: 'node_modules/requirejs',
                         src: 'require.js',
                         dest: 'dist/js/lib/requirejs/'

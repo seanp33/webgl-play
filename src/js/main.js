@@ -2,7 +2,8 @@ require.config({
     paths: {
         'requirejs': 'lib/requirejs',
         'signals': 'lib/signals',
-        'glmatrix': 'lib/glmatrix'
+        'glmatrix': 'lib/glmatrix',
+	'text': 'lib/requirejs/text'
     }
 });
 

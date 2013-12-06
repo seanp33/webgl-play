@@ -13,12 +13,11 @@
   "author": "Sean Monaghan",
   "dependencies": {
     "lodash": "~2.2.1",
-    "three": "~0.63.0",
-    "dat-gui": "~0.5.0",
     "tween": "~0.8.0",
     "signals": "~1.0.0",
     "domready": "~0.2.13",
-    "grunt-template-jasmine-requirejs": "~0.1.7"
+    "grunt-template-jasmine-requirejs": "~0.1.7",
+    "requirejs": "~2.1.9"
   },
   "devDependencies": {
     "grunt": "0.4.1",
