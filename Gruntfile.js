@@ -44,12 +44,6 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
-                        cwd: 'node_modules/tween/',
-                        src: 'tween.js',
-                        dest: 'dist/js/lib/tween/'
-                    },
-                    {
-                        expand: true,
                         cwd: 'node_modules/requirejs',
                         src: 'require.js',
                         dest: 'dist/js/lib/requirejs/'

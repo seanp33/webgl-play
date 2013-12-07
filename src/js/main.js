@@ -3,6 +3,7 @@ require.config({
         'requirejs': 'lib/requirejs',
         'signals': 'lib/signals',
         'glmatrix': 'lib/glmatrix',
+	'lodash': 'lib/lodash/lodash',
 	'text': 'lib/requirejs/text'
     }
 });

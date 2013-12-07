@@ -1,5 +1,6 @@
 define(
     [
+        'splotch/anim/clock',
         'splotch/ui/Baller',
         'splotch/ui/Avatar',
         'splotch/ui/AvatarController',
@@ -8,14 +9,13 @@ define(
         'signals/Signals'
     ],
 
-    function (Baller, Avatar, AvatarController, simple_vertex, simple_fragment, Signal) {
+    function (clock, Baller, Avatar, AvatarController, simple_vertex, simple_fragment, Signal) {
 
         var container, stats;
-        var camera, controls, scene, renderer, clock, plane, avatar, baller;
+        var camera, controls, scene, renderer, plane, avatar, baller;
 
 
         function animate() {
-            requestAnimationFrame(animate);
             render();
             stats.update();
         }
@@ -68,8 +68,6 @@ define(
             plane.rotation.x = -Math.PI / 2;
             scene.add(plane);
 
-            //projector = new THREE.Projector();
-
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.sortObjects = false;
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -100,7 +98,7 @@ define(
 		});
             
             // init baller
-            baller = new Baller(new THREE.Vector3(100, 100, 100), baller_mat, scene);
+            baller = new Baller(new THREE.Vector3(0, 200, 0), baller_mat, scene);
             baller.init();
             
             // adding nav controls last to give AvatarController first dibs
@@ -113,7 +111,8 @@ define(
             controls.staticMoving = true;
             controls.dynamicDampingFactor = 0.3;
 
-            animate();
+            clock.add(animate);
+            clock.start();
         };
 
 
