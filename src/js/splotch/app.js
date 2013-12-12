@@ -2,18 +2,19 @@ define(
     [
 	'splotch/model/ShaderGuts',
         'splotch/ui/Viewport',
-	'splotch/ui/Baller',
 	'splotch/data/colors',
 	'splotch/util/graph_gen',
         'signals/Signals'
     ],
 
-    function (ShaderGuts, Viewport, Baller, colors, graph_gen, Signal) {
-        return {
+    function (ShaderGuts, Viewport, colors, graph_gen, Signal) {
+        
+	
+	return {
             $started: new Signal(),
             $faulted: new Signal(),
 
-            run: function () {
+	    run: function () {
 		this.init_datgui();
                 var self = this;
                 this.viewport = new Viewport();
@@ -26,13 +27,21 @@ define(
                     console.log(msg);
                     self.$faulted.dispatch(msg);
                 });
-
-		this._init_graph();
 		
                 this.viewport.init();
-            },
+
+},
 	    
 	    init_datgui:function(){
+		var self = this;
+		this.particle_control = {
+		    particle_count:1000,
+		    particle_color:"#ffae23",
+		    generate:function(){
+			self.gen_particles();
+		    }
+		}
+		
 		var guts = new ShaderGuts();
 		
 		guts.vertex = "simple_vertex";
@@ -43,20 +52,26 @@ define(
 		gui.add(guts, "vertex");
 		gui.add(guts, "fragment");
 		gui.add(guts, "somebool");
+		gui.add(this.particle_control, "particle_count");
+		gui.add(this.particle_control, "particle_color");
+		gui.add(this.particle_control, "generate");
 	
 	    },
 	    
-	    _init_graph:function(){
+	    gen_particles:function(){
 		var conf = {
-		    count:1000,
-		    existing_node_count:1000,
-		    color_palette:colors.paired,
+		    count:this.particle_control.particle_count,
+		    existing_node_count:0,
+		    color_palette:[this.particle_control.particle_color],
 		    max_edges_per_node:10,
-		    area:100
+		    area:1000
 		}
 		
+		console.log(JSON.stringify(conf));
+		
+		var self = this;
 		graph_gen.generate(conf, function(nodes){
-		    console.log(JSON.stringify(nodes));
+		    self.viewport.feed_particles(nodes);
 		});
 	    }
         };
