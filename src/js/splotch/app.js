@@ -3,10 +3,12 @@ define(
 	'splotch/model/ShaderGuts',
         'splotch/ui/Viewport',
 	'splotch/ui/Baller',
+	'splotch/data/colors',
+	'splotch/util/graph_gen',
         'signals/Signals'
     ],
 
-    function (ShaderGuts, Viewport, Baller, Signal) {
+    function (ShaderGuts, Viewport, Baller, colors, graph_gen, Signal) {
         return {
             $started: new Signal(),
             $faulted: new Signal(),
@@ -25,6 +27,8 @@ define(
                     self.$faulted.dispatch(msg);
                 });
 
+		this._init_graph();
+		
                 this.viewport.init();
             },
 	    
@@ -40,6 +44,20 @@ define(
 		gui.add(guts, "fragment");
 		gui.add(guts, "somebool");
 	
+	    },
+	    
+	    _init_graph:function(){
+		var conf = {
+		    count:1000,
+		    existing_node_count:1000,
+		    color_palette:colors.paired,
+		    max_edges_per_node:10,
+		    area:100
+		}
+		
+		graph_gen.generate(conf, function(nodes){
+		    console.log(JSON.stringify(nodes));
+		});
 	    }
         };
     }

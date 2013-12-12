@@ -4,12 +4,10 @@ define(
         'splotch/ui/Baller',
         'splotch/ui/Avatar',
         'splotch/ui/AvatarController',
-        'text!shaders/SimpleVertex.glsl',
-	'text!shaders/SimpleFragment.glsl',
         'signals/Signals'
     ],
 
-    function (clock, Baller, Avatar, AvatarController, simple_vertex, simple_fragment, Signal) {
+    function (clock, Baller, Avatar, AvatarController, Signal) {
 
         var container, stats;
         var camera, controls, scene, renderer, plane, avatar, baller;
@@ -92,13 +90,8 @@ define(
             avatarController = new AvatarController(avatar, plane, camera, scene, renderer.domElement, 'shiftKey');
             avatarController.init();
             
-            var baller_mat = new THREE.ShaderMaterial({
-		    vertexShader:   simple_vertex,
-		    fragmentShader: simple_fragment
-		});
-            
             // init baller
-            baller = new Baller(new THREE.Vector3(0, 200, 0), baller_mat, scene);
+            baller = new Baller(new THREE.Vector3(0, 200, 0), scene);
             baller.init();
             
             // adding nav controls last to give AvatarController first dibs

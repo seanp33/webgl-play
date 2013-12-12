@@ -1,15 +1,38 @@
 define(
        [
-        'splotch/anim/clock'
+        'splotch/anim/clock',
+        'text!shaders/SimpleVertex.glsl',
+	'text!shaders/SimpleFragment.glsl',
        ],
        
-       function(clock){
+       function(clock, simple_vertex, simple_fragment){
     
-        function Baller(position, material, scene){
+        function Baller(position, scene){
             this.position = position;
-            this.material = material;
             this.scene = scene;
-            this.sphere = new THREE.Mesh( new THREE.SphereGeometry( 75, 20, 10 ), material );
+            
+            var attributes = {
+              displacement: {
+                  type: 'f', // a float
+                  value: [] // an empty array
+              }
+            };
+            
+            var baller_mat = new THREE.ShaderMaterial({
+                    attributes: attributes,
+		    vertexShader:   simple_vertex,
+		    fragmentShader: simple_fragment
+            });
+
+            this.sphere = new THREE.Mesh( new THREE.SphereGeometry( 75, 20, 10 ), baller_mat );
+
+            // now populate the array of attributes
+            var vertices = this.sphere.geometry.vertices;
+            var values = attributes.displacement.value
+            for(var v = 0; v < vertices.length; v++) {
+                values.push(Math.random() * 30);
+            }
+
         }
         
         Baller.prototype = {
@@ -19,7 +42,7 @@ define(
                 this.scene.add(this.sphere);
                 
                 var position = { x : this.position.x, y: this.position.y };
-                var target = { x : this.position.x+100, y: this.position.y+300 };
+                var target = { x : this.position.x, y: this.position.y+300 };
                 var tween = new TWEEN.Tween(position)
                     .to(target, 500)
                     .repeat(Infinity)
