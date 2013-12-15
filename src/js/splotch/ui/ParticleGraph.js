@@ -7,10 +7,14 @@ define(
             function ParticleGraph(scene){
                 this.scene = scene;
                 this.particles = new THREE.Geometry(),
-                //this.particles.dynamic = true;
+                
                 this.pMaterial = new THREE.ParticleBasicMaterial({
-                      color: 0xFF0000,
+                      color: 0x155CA9,
                       size: 10
+                    });
+                
+                this.lineMaterial = new THREE.LineBasicMaterial({
+                    color: 0xEA560
                     });
             }
             
@@ -39,12 +43,23 @@ define(
                         var n = nodes[i-start];
                         var p = this.particles.vertices[i];
                         p.set(n.pos.x, n.pos.y, n.pos.z);
+                        //this._connect(n);
                     }
                     
                     this.last_node_count = end;
                 },
                 
                 update:function(){},
+                
+                _connect:function(node){
+                    for(var i=0;i<node.edges.length;i++){
+                        var dst_vtx = this.particles.vertices[node.edges[i]];
+                        var geometry = new THREE.Geometry();
+                        geometry.vertices.push(new THREE.Vector3(node.pos.x, node.pos.y, node.pos.z));
+                        geometry.vertices.push(new THREE.Vector3(dst_vtx.x, dst_vtx.y, dst_vtx.z));
+                        this.scene.add(new THREE.Line(geometry, this.lineMaterial));
+                    }
+                },
                 
                 _fill_system:function(size){
                     for(var i=0; i < size; i++){

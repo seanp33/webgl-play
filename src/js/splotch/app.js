@@ -63,7 +63,7 @@ define(
 		    count:this.particle_control.particle_count,
 		    existing_node_count:0,
 		    color_palette:[this.particle_control.particle_color],
-		    max_edges_per_node:10,
+		    max_edges_per_node:3,
 		    area:1000
 		}
 		
