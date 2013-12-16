@@ -102,7 +102,8 @@ define(
                 renderer = new THREE.WebGLRenderer({ antialias: true });
                 renderer.sortObjects = false;
                 renderer.setSize(window.innerWidth, window.innerHeight);
-    
+                renderer.setClearColor( 0xf0f0f0, 1 );
+        
                 renderer.shadowMapEnabled = true;
                 renderer.shadowMapType = THREE.PCFShadowMap;
     

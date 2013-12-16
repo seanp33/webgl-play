@@ -2,13 +2,16 @@
  * @author Eberhard Graether / http://egraether.com/
  */
 
-THREE.TrackballControls = function ( object, domElement ) {
+THREE.TrackballControls = function ( object, domElement, disableModifier ) {
 
 	var _this = this;
 	var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM: 4, TOUCH_PAN: 5 };
 
 	this.object = object;
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
+        
+        // spmona2: added to support disablement of control in responsed to modifier key press
+        this.disableModifier = disableModifier;
 
 	// API
 
@@ -323,7 +326,8 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function keydown( event ) {
 
-		if ( _this.enabled === false ) return;
+		//if ( _this.enabled === false ) return;
+                if ( disabled(event) ) return;
 
 		window.removeEventListener( 'keydown', keydown );
 
@@ -351,7 +355,8 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function keyup( event ) {
 
-		if ( _this.enabled === false ) return;
+		// if ( _this.enabled === false ) return;
+                if ( disabled(event) ) return;
 
 		_state = _prevState;
 
@@ -361,7 +366,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function mousedown( event ) {
 
-		if ( _this.enabled === false ) return;
+		if ( disabled(event) ) return;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -398,7 +403,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function mousemove( event ) {
 
-		if ( _this.enabled === false ) return;
+		if ( disabled(event) ) return;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -421,7 +426,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function mouseup( event ) {
 
-		if ( _this.enabled === false ) return;
+		if ( disabled(event) ) return;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -461,7 +466,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function touchstart( event ) {
 
-		if ( _this.enabled === false ) return;
+		if ( disabled(event) ) return;
 
 		switch ( event.touches.length ) {
 
@@ -493,7 +498,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function touchmove( event ) {
 
-		if ( _this.enabled === false ) return;
+		if ( disabled(event) ) return;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -523,7 +528,7 @@ THREE.TrackballControls = function ( object, domElement ) {
 
 	function touchend( event ) {
 
-		if ( _this.enabled === false ) return;
+		if ( disabled(event) ) return;
 
 		switch ( event.touches.length ) {
 
@@ -545,6 +550,10 @@ THREE.TrackballControls = function ( object, domElement ) {
 		_this.dispatchEvent( endEvent );
 
 	}
+        
+        function disabled(event){
+            return (_this.enabled === false || event[_this.disableModifier] === true);
+        }
 
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
