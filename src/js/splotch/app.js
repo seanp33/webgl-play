@@ -9,6 +9,7 @@ define(
 
     function (ShaderGuts, Viewport, colors, graph_gen, Signal) {
         
+	var existing_node_count = 0;
 	
 	return {
             $started: new Signal(),
@@ -61,12 +62,14 @@ define(
 	    gen_particles:function(){
 		var conf = {
 		    count:this.particle_control.particle_count,
-		    existing_node_count:0,
+		    existing_node_count:existing_node_count,
 		    color_palette:[this.particle_control.particle_color],
 		    max_edges_per_node:3,
 		    area:1000
 		}
 		
+		existing_node_count += this.particle_control.particle_count;
+
 		console.log(JSON.stringify(conf));
 		
 		var self = this;
