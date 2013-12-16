@@ -11,10 +11,11 @@ define(
                 this.nodes_geom = new THREE.Geometry();                
                 this.nodes_mat = new THREE.ParticleBasicMaterial({
                       color: 0x155CA9,
-                      size: 10
+                      size: 30
                     });
                 
                 this.edges_geom = new THREE.BufferGeometry();
+                this.edges_geom.dynamic = true;
                 this.edges_geom.addAttribute( 'position', Float32Array, EDGE_COUNT, 3 );
                 
                 this.edges_mat = new THREE.LineBasicMaterial({ color:0xF58CA6, linewidth:1});
@@ -58,7 +59,7 @@ define(
                     for(var i=start; i < end; i++){
                         var idx = i-start;
                         var n = nodes[idx];
-                        this._connect(n, idx);
+                        this._connect(n, i);
                     }
                     
                     this.edges_geom.attributes.position.needsUpdate = true;
@@ -69,17 +70,12 @@ define(
                 
                 update:function(){},
                 
-                _connect_curve:function(node){                    
-                    for(var i=0;i<node.edges.length;i++){
-                            
-                    }
-                },
-                
                 _connect:function(node, idx){
                     var positions = this.edges_geom.attributes.position.array;
                     for(var i=0;i<node.edges.length;i++){
                         var dst_vtx = this.nodes_geom.vertices[node.edges[i]];
                         var offset = i * idx;
+                        //console.log('set ' + offset);
                         positions[ offset * 6 + 0 ] = node.pos.x;
                         positions[ offset * 6 + 1 ] = node.pos.y;
                         positions[ offset * 6 + 2 ] = node.pos.z;

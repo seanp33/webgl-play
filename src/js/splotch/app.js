@@ -36,7 +36,7 @@ define(
 	    init_datgui:function(){
 		var self = this;
 		this.particle_control = {
-		    particle_count:1000,
+		    particle_count:100,
 		    particle_color:"#ffae23",
 		    generate:function(){
 			self.gen_particles();
@@ -65,7 +65,7 @@ define(
 		    existing_node_count:existing_node_count,
 		    color_palette:[this.particle_control.particle_color],
 		    max_edges_per_node:3,
-		    area:1000
+		    area:3000
 		}
 		
 		existing_node_count += this.particle_control.particle_count;
