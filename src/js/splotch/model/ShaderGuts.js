@@ -1,12 +1,12 @@
-define([], function(){
+define([], function () {
 
-    function ShaderGuts(v, f){
-	this.vertex = v || "";
-	this.fragment = f || "";
-	this.somebool = true;
-    }
+  function ShaderGuts(v, f) {
+    this.vertex = v || "";
+    this.fragment = f || "";
+    this.somebool = true;
+  }
 
-    ShaderGuts.prototype = {}
+  ShaderGuts.prototype = {}
 
-    return ShaderGuts;
+  return ShaderGuts;
 })

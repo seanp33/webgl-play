@@ -1,5 +1,5 @@
 define("splotch/util", [],
-    function() {
-        return {};
-    }
+  function () {
+    return {};
+  }
 );
