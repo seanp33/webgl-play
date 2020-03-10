@@ -56,7 +56,7 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
-                        cwd: 'node_modules/lodash/dist',
+                        cwd: 'node_modules/lodash',
                         src: 'lodash.js',
                         dest: 'dist/js/lib/lodash/'
                     },
