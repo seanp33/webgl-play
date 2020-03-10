@@ -12,7 +12,7 @@
   },
   "author": "Sean Monaghan",
   "dependencies": {
-    "lodash": "~2.2.1",
+    "lodash": "~4.17.15",
     "tween": "~0.8.0",
     "signals": "~1.0.0",
     "domready": "~0.2.13",
